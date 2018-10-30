@@ -1,19 +1,20 @@
 <?php
 
 require_once 'Banco.php';
+require_once 'Venda.php';
 require_once 'Usuario.php';
 
-class UsuarioDAO {
+class VendaDAO {
 
-    public function salvar($usuario) {
+    public function salvar($venda) {
         $situacao = FALSE;
         try {
 
-            if ($usuario->getIdUsuario() == 0) {
+            if ($venda->getId() == 0) {
 
-                $situacao = $this->incluir($usuario);
+                $situacao = $this->incluir($venda);
             } else {
-                $situacao = $this->atualizar($usuario);
+                $situacao = $this->atualizar($venda);
             }
         } catch (Exception $ex) {
             echo $ex->getFile() . ' : ' . $ex->getLine() . ' : ' . $ex->getMessage();
@@ -22,27 +23,28 @@ class UsuarioDAO {
         return $situacao;
     }
 
-    public function incluir($usuario) {
+    public function incluir($venda) {
         $situacao = FALSE;
         try {
 
             $pdo = Banco::conectar();
 
-            $sql = "INSERT INTO tbUsuario(login, senha, email, situacao, idGrupoAcesso) VALUES (:login, :senha, :email, :situacao, :idGrupoAcesso)";
-
+            $sql = "INSERT INTO tbVenda (cliente, cpf, dataVenda, total) VALUES (:cliente, :cpf, :dataVenda, :total)";
             $run = $pdo->prepare($sql);
-            $run->bindParam(':login', $usuario->getLogin(), PDO::PARAM_STR);
-            $run->bindParam(':senha', $usuario->getSenha(), PDO::PARAM_STR);
-            $run->bindParam(':email', $usuario->getEmail(), PDO::PARAM_STR);
-            $run->bindParam(':situacao', $usuario->getSituacao(), PDO::PARAM_INT);
-            $run->bindParam(':idGrupoAcesso', $usuario->getIdGrupoAcesso(), PDO::PARAM_INT);
+
+
+            $run->bindParam(':cliente', $venda->getCliente(), PDO::PARAM_STR);
+            $run->bindParam(':cpf', $venda->getCpf(), PDO::PARAM_STR);
+            $run->bindParam(':dataVenda', $venda->getDataVenda());
+            $run->bindParam(':total', $venda->getTotal(), PDO::PARAM_INT);
+
             $run->execute();
 
             if ($run->rowCount() > 0) {
                 $situacao = TRUE;
             }
 
-            $usuario->setIdUsuario($pdo->lastInsertId());
+            $venda->setId($pdo->lastInsertId());
         } catch (Exception $ex) {
             echo $ex->getFile() . ' : ' . $ex->getLine() . ' : ' . $ex->getMessage();
         } finally {
@@ -52,21 +54,21 @@ class UsuarioDAO {
         return $situacao;
     }
 
-    public function atualizar($usuario) {
+    public function atualizar($venda) {
         $situacao = FALSE;
         try {
 
+            /* @var $pdo type */
             $pdo = Banco::conectar();
 
-            $sql = "UPDATE tbUsuario SET login = :login, senha = :senha, email = :email, situacao = :situacao, idGrupoAcesso = :idGrupoAcesso WHERE idUsuario = :idUsuario";
-
+            $sql = "UPDATE tbVenda SET cliente = :cliente, cpf = :cpf, dataVenda = :dataVenda, total = :total  WHERE id = :id";
             $run = $pdo->prepare($sql);
-            $run->bindParam(':idUsuario', $usuario->getIdUsuario(), PDO::PARAM_INT);
-            $run->bindParam(':login', $usuario->getLogin(), PDO::PARAM_STR);
-            $run->bindParam(':senha', $usuario->getSenha(), PDO::PARAM_STR);
-            $run->bindParam(':email', $usuario->getEmail(), PDO::PARAM_STR);
-            $run->bindParam(':situacao', $usuario->getSituacao(), PDO::PARAM_INT);
-            $run->bindParam(':idGrupoAcesso', $usuario->getIdGrupoAcesso(), PDO::PARAM_INT);
+
+
+            $run->bindParam(':cliente', $venda->getCliente(), PDO::PARAM_STR);
+            $run->bindParam(':cpf', $venda->getCpf(), PDO::PARAM_STR);
+            $run->bindParam(':dataVenda', $venda->getDataVenda(), PDO::PARAM_STR);
+            $run->bindParam(':total', $venda->getTotal(), PDO::PARAM_INT);
             $run->execute();
 
             if ($run->rowCount() > 0) {
@@ -81,17 +83,18 @@ class UsuarioDAO {
         return $situacao;
     }
 
-    public function excluir($usuario) {
+    public function excluir($venda) {
 
         $situacao = FALSE;
         try {
 
             $pdo = Banco::conectar();
 
-            $sql = "DELETE FROM tbUsuario WHERE idUsuario = :idUsuario";
+            $sql = "DELETE FROM tbVenda WHERE id = :id";
+
 
             $run = $pdo->prepare($sql);
-            $run->bindParam(':idUsuario', $usuario->getIdUsuario(), PDO::PARAM_INT);
+            $run->bindParam(':id', $venda->getId(), PDO::PARAM_INT);
             $run->execute();
 
             if ($run->rowCount() > 0) {
@@ -113,10 +116,10 @@ class UsuarioDAO {
 
             $pdo = Banco::conectar();
 
-            $sql = "DELETE FROM tbUsuario WHERE idUsuario = :idUsuario";
+            $sql = "DELETE FROM tbVenda WHERE id = :id";
 
             $run = $pdo->prepare($sql);
-            $run->bindParam(':idUsuario', $codigo, PDO::PARAM_INT);
+            $run->bindParam(':id', $codigo, PDO::PARAM_INT);
             $run->execute();
 
             if ($run->rowCount() > 0) {
@@ -139,7 +142,7 @@ class UsuarioDAO {
 
             $pdo = Banco::conectar();
 
-            $sql = "SELECT * FROM tbUsuario";
+            $sql = "SELECT * FROM tbVenda";
 
             $run = $pdo->prepare($sql);
             $run->execute();
@@ -147,15 +150,13 @@ class UsuarioDAO {
 
             foreach ($resultado as $objeto) {
 
-                $usuario = new Usuario();
-                $usuario->setIdUsuario($objeto['idUsuario']);
-                $usuario->setLogin($objeto['login']);
-                $usuario->setSenha($objeto['senha']);
-                $usuario->setEmail($objeto['email']);
-                $usuario->setUltimoAcesso($objeto['ultimoAcesso']);
-                $usuario->setSituacao($objeto['situacao']);
-                $usuario->setIdGrupoAcesso($objeto['idGrupoAcesso']);
-                array_push($objetos, $usuario);
+                $venda = new Venda();
+                $venda->setId($objeto['id']);
+                $venda->setCliente($objeto['cliente']);
+                $venda->setCpf($objeto['cpf']);
+                $venda->setDataVenda($objeto['dataVenda']);
+                $venda->setTotal($objeto['total']);
+                array_push($objetos, $venda);
             }
         } catch (Exception $ex) {
             echo $ex->getFile() . ' : ' . $ex->getLine() . ' : ' . $ex->getMessage();
@@ -168,34 +169,31 @@ class UsuarioDAO {
 
     public function buscarPorId($codigo) {
 
-        $usuario = new Usuario();
+        $venda = new Venda();
 
         try {
 
             $pdo = Banco::conectar();
 
-            $sql = "SELECT * FROM tbUsuario WHERE idUsuario = :idUsuario";
+            $sql = "SELECT * FROM tbVenda WHERE id = :id";
 
             $run = $pdo->prepare($sql);
-            $run->bindParam(':idUsuario', $codigo, PDO::PARAM_INT);
+            $run->bindParam(':id', $codigo, PDO::PARAM_INT);
             $run->execute();
             $resultado = $run->fetch();
 
-            $usuario = new Usuario();
-            $usuario->setIdUsuario($resultado['idUsuario']);
-            $usuario->setLogin($resultado['login']);
-            $usuario->setSenha($resultado['senha']);
-            $usuario->setEmail($resultado['email']);
-            $usuario->setUltimoAcesso($resultado['ultimoAcesso']);
-            $usuario->setSituacao($resultado['situacao']);
-            $usuario->setIdGrupoAcesso($resultado['idGrupoAcesso']);
+            $venda->setId($$resultado['id']);
+            $venda->setCliente($resultado['cliente']);
+            $venda->setCpf($resultado['cpf']);
+            $venda->setDataVenda($resultado['dataVenda']);
+            $venda->setTotal($resultado['total']);
         } catch (Exception $ex) {
             echo $ex->getFile() . ' : ' . $ex->getLine() . ' : ' . $ex->getMessage();
         } finally {
             Banco::desconectar();
         }
 
-        return $usuario;
+        return $venda;
     }
 
     public function autenticar($login, $senha) {

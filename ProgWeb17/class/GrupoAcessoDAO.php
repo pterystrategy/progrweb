@@ -1,194 +1,184 @@
-<?php	
-	require_once 'Banco.php';
-	require_once 'GrupoAcesso.php';
+<?php
 
-	class GrupoAcessoDAO
-	{
+require_once 'Banco.php';
+require_once 'GrupoAcesso.php';
 
-		public function salvar($grupoAcesso){	
-			$situacao = FALSE;
-			try{
-				
-				if($grupoAcesso->getIdGrupoAcesso()==0){
+class GrupoAcessoDAO {
 
-					$situacao = $this->incluir($grupoAcesso);
+    public function salvar($grupoAcesso) {
+        $situacao = FALSE;
+        try {
 
-				}else{	
-					$situacao = $this->atualizar($grupoAcesso);
-				}
+            if ($grupoAcesso->getIdGrupoAcesso() == 0) {
 
-			}catch(Exception $ex){
-				echo $ex->getFile().' : '.$ex->getLine().' : '.$ex->getMessage();
-			}			
+                $situacao = $this->incluir($grupoAcesso);
+            } else {
+                $situacao = $this->atualizar($grupoAcesso);
+            }
+        } catch (Exception $ex) {
+            echo $ex->getFile() . ' : ' . $ex->getLine() . ' : ' . $ex->getMessage();
+        }
 
-			return $situacao;
-		}
+        return $situacao;
+    }
 
-		public function incluir($grupoAcesso){	
-			$situacao = FALSE;
-			try{
-				
-				$pdo = Banco::conectar();	
+    public function incluir($grupoAcesso) {
+        $situacao = FALSE;
+        try {
 
-				$sql = "INSERT INTO tbGrupoAcesso (descricao) VALUES (:descricao)";
+            $pdo = Banco::conectar();
 
-				$run = $pdo->prepare($sql);
-				$run->bindParam(':descricao', $grupoAcesso->getDescricao(), PDO::PARAM_STR); 
-	  			$run->execute(); 
+            $sql = "INSERT INTO tbGrupoAcesso (descricao) VALUES (:descricao)";
 
-				if($run->rowCount() > 0){
-					$situacao = TRUE;
-				}
+            $run = $pdo->prepare($sql);
+            $run->bindParam(':descricao', $grupoAcesso->getDescricao(), PDO::PARAM_STR);
+            $run->execute();
 
-				$grupoAcesso->setIdGrupoAcesso($pdo->lastInsertId());
-				
-			}catch(Exception $ex){
-				echo $ex->getFile().' : '.$ex->getLine().' : '.$ex->getMessage();
-			}finally {
-				Banco::desconectar();
-			}		
+            if ($run->rowCount() > 0) {
+                $situacao = TRUE;
+            }
 
-			return $situacao;
-		}
+            $grupoAcesso->setIdGrupoAcesso($pdo->lastInsertId());
+        } catch (Exception $ex) {
+            echo $ex->getFile() . ' : ' . $ex->getLine() . ' : ' . $ex->getMessage();
+        } finally {
+            Banco::desconectar();
+        }
 
-		public function atualizar($grupoAcesso){	
-			$situacao = FALSE;
-			try{
-				
-				$pdo = Banco::conectar();
-					
-				$sql = "UPDATE tbGrupoAcesso SET descricao = :descricao WHERE idGrupoAcesso = :idGrupoAcesso";
+        return $situacao;
+    }
 
-				$run = $pdo->prepare($sql);
-	  			$run->bindParam(':descricao', $grupoAcesso->getDescricao(), PDO::PARAM_STR);
-	  			$run->bindParam(':idGrupoAcesso', $grupoAcesso->getIdGrupoAcesso(), PDO::PARAM_INT);				
-				$run->execute(); 
+    public function atualizar($grupoAcesso) {
+        $situacao = FALSE;
+        try {
 
-				if($run->rowCount() > 0){
-					$situacao = TRUE;
-				}
-				
-			}catch(Exception $ex){
-				echo $ex->getFile().' : '.$ex->getLine().' : '.$ex->getMessage();
-			}finally {
-				Banco::desconectar();
-			}			
+            $pdo = Banco::conectar();
 
-			return $situacao;
-		}						
+            $sql = "UPDATE tbGrupoAcesso SET descricao = :descricao WHERE idGrupoAcesso = :idGrupoAcesso";
 
-		public function excluir($grupoAcesso){
+            $run = $pdo->prepare($sql);
+            $run->bindParam(":descricao", $grupoAcesso->getDescricao(), PDO::PARAM_STR);
+            $run->bindParam(":idGrupoAcesso", $grupoAcesso->getIdGrupoAcesso(), PDO::PARAM_INT);
+            $run->execute();
 
-			$situacao = FALSE;
-			try{
-				
-				$pdo = Banco::conectar();	
-					
-				$sql = "DELETE FROM tbGrupoAcesso WHERE idGrupoAcesso = :idGrupoAcesso";
+            if ($run->rowCount() > 0) {
+                $situacao = TRUE;
+            }
+        } catch (Exception $ex) {
+            echo $ex->getFile() . ' : ' . $ex->getLine() . ' : ' . $ex->getMessage();
+        } finally {
+            Banco::desconectar();
+        }
 
-				$run = $pdo->prepare($sql);
-	  			$run->bindParam(':idGrupoAcesso', $grupoAcesso->getIdGrupoAcesso(), PDO::PARAM_INT);			
-				$run->execute(); 
+        return $situacao;
+    }
 
-				if($run->rowCount() > 0){
-					$situacao = TRUE;
-				}
-				
-			}catch(Exception $ex){
-				echo $ex->getFile().' : '.$ex->getLine().' : '.$ex->getMessage();
-			}finally {
-				Banco::desconectar();
-			}			
+    public function excluir($grupoAcesso) {
 
-			return $situacao;
+        $situacao = FALSE;
+        try {
 
-		}
+            $pdo = Banco::conectar();
 
-		public function excluirPorId($codigo){
+            $sql = "DELETE FROM tbGrupoAcesso WHERE idGrupoAcesso = :idGrupoAcesso";
 
-			$situacao = FALSE;
-			try{
-				
-				$pdo = Banco::conectar();	
-					
-				$sql = "DELETE FROM tbGrupoAcesso WHERE idGrupoAcesso = :idGrupoAcesso";
+            $run = $pdo->prepare($sql);
+            $run->bindParam(':idGrupoAcesso', $grupoAcesso->getIdGrupoAcesso(), PDO::PARAM_INT);
+            $run->execute();
 
-				$run = $pdo->prepare($sql);
-	  			$run->bindParam(':idGrupoAcesso', $codigo, PDO::PARAM_INT);			
-				$run->execute(); 
+            if ($run->rowCount() > 0) {
+                $situacao = TRUE;
+            }
+        } catch (Exception $ex) {
+            echo $ex->getFile() . ' : ' . $ex->getLine() . ' : ' . $ex->getMessage();
+        } finally {
+            Banco::desconectar();
+        }
 
-				if($run->rowCount() > 0){
-					$situacao = TRUE;
-				}
-				
-			}catch(Exception $ex){
-				echo $ex->getFile().' : '.$ex->getLine().' : '.$ex->getMessage();
-			}finally {
-				Banco::desconectar();
-			}			
+        return $situacao;
+    }
 
-			return $situacao;
+    public function excluirPorId($codigo) {
 
-		}					
+        $situacao = FALSE;
+        try {
 
-		public function listar(){
+            $pdo = Banco::conectar();
 
-			$objetos = array();	
+            $sql = "DELETE FROM tbGrupoAcesso WHERE idGrupoAcesso = :idGrupoAcesso";
 
-			try{
-				
-				$pdo = Banco::conectar();
-					
-				$sql = "SELECT * FROM tbGrupoAcesso";
+            $run = $pdo->prepare($sql);
+            $run->bindParam(':idGrupoAcesso', $codigo, PDO::PARAM_INT);
+            $run->execute();
 
-				$run = $pdo->prepare($sql);			
-				$run->execute(); 
-				$resultado = $run->fetchAll();
+            if ($run->rowCount() > 0) {
+                $situacao = TRUE;
+            }
+        } catch (Exception $ex) {
+            echo $ex->getFile() . ' : ' . $ex->getLine() . ' : ' . $ex->getMessage();
+        } finally {
+            Banco::desconectar();
+        }
 
-				foreach ($resultado as $objeto){
+        return $situacao;
+    }
 
-					$grupoAcesso = new GrupoAcesso();
-					$grupoAcesso->setIdGrupoAcesso($objeto['idGrupoAcesso']);
-					$grupoAcesso->setDescricao($objeto['descricao']);
-					array_push($objetos, $grupoAcesso);
-				}	
-				
-			}catch(Exception $ex){
-				echo $ex->getFile().' : '.$ex->getLine().' : '.$ex->getMessage();
-			}finally {
-				Banco::desconectar();
-			}		
+    public function listar() {
 
-			return $objetos;
+        $objetos = array();
 
-		}			
-		
-		public function buscarPorId($codigo){
+        try {
 
-			$grupoAcesso = new GrupoAcesso();
-						
-			try{
+            $pdo = Banco::conectar();
 
-				$pdo = Banco::conectar();
+            $sql = "SELECT * FROM tbGrupoAcesso";
 
-				$sql = "SELECT * FROM tbGrupoAcesso WHERE idGrupoAcesso = :idGrupoAcesso";
+            $run = $pdo->prepare($sql);
+            $run->execute();
+            $resultado = $run->fetchAll();
 
-				$run = $pdo->prepare($sql);
-	  			$run->bindParam(':idGrupoAcesso', $codigo, PDO::PARAM_INT);			
-				$run->execute(); 
-				$resultado = $run->fetch();
+            foreach ($resultado as $objeto) {
 
-				$grupoAcesso->setIdGrupoAcesso($resultado['idGrupoAcesso']);
-				$grupoAcesso->setDescricao($resultado['descricao']);
+                $grupoAcesso = new GrupoAcesso();
+                $grupoAcesso->setIdGrupoAcesso($objeto['idGrupoAcesso']);
+                $grupoAcesso->setDescricao($objeto['descricao']);
+                array_push($objetos, $grupoAcesso);
+            }
+        } catch (Exception $ex) {
+            echo $ex->getFile() . ' : ' . $ex->getLine() . ' : ' . $ex->getMessage();
+        } finally {
+            Banco::desconectar();
+        }
 
-			}catch(Exception $ex){
-				echo $ex->getFile().' : '.$ex->getLine().' : '.$ex->getMessage();
-			}finally {
-				Banco::desconectar();
-			}
-			
-			return $grupoAcesso;
-		}		
-	}
-	
-?> 
+        return $objetos;
+    }
+
+    public function buscarPorId($codigo) {
+
+        $grupoAcesso = new GrupoAcesso();
+
+        try {
+
+            $pdo = Banco::conectar();
+
+            $sql = "SELECT * FROM tbGrupoAcesso WHERE idGrupoAcesso = :idGrupoAcesso";
+
+            $run = $pdo->prepare($sql);
+            $run->bindParam(':idGrupoAcesso', $codigo, PDO::PARAM_INT);
+            $run->execute();
+            $resultado = $run->fetch();
+
+            $grupoAcesso->setIdGrupoAcesso($resultado['idGrupoAcesso']);
+            $grupoAcesso->setDescricao($resultado['descricao']);
+        } catch (Exception $ex) {
+            echo $ex->getFile() . ' : ' . $ex->getLine() . ' : ' . $ex->getMessage();
+        } finally {
+            Banco::desconectar();
+        }
+
+        return $grupoAcesso;
+    }
+
+}
+
+?>
