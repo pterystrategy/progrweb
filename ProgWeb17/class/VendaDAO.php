@@ -64,11 +64,11 @@ class VendaDAO {
             $sql = "UPDATE tbVenda SET cliente = :cliente, cpf = :cpf, dataVenda = :dataVenda, total = :total  WHERE id = :id";
             $run = $pdo->prepare($sql);
 
-
+            $run->bindParam(':id', $venda->getId(), PDO::PARAM_INT);
             $run->bindParam(':cliente', $venda->getCliente(), PDO::PARAM_STR);
             $run->bindParam(':cpf', $venda->getCpf(), PDO::PARAM_STR);
             $run->bindParam(':dataVenda', $venda->getDataVenda(), PDO::PARAM_STR);
-            $run->bindParam(':total', $venda->getTotal(), PDO::PARAM_INT);
+            $run->bindParam(':total', $venda->getId(), PDO::PARAM_INT);
             $run->execute();
 
             if ($run->rowCount() > 0) {

@@ -8,11 +8,11 @@ $venda = new Venda();
 switch ($operacao) {
     case 'salvar':
 
-        $venda->setId($_POST['id']);
-        $venda->setCliente($_POST['cliente']);
-        $venda->setCpf($_POST['cpf']);
-        $venda->setDataVenda($_POST['date']);
-        $venda->setTotal($_POST['total']);
+        $venda->setId($_POST["id"]);
+        $venda->setCliente($_POST["cliente"]);
+        $venda->setCpf($_POST["cpf"]);
+        $venda->setDataVenda($_POST["date"]);
+        $venda->setTotal($_POST["total"]);
 
         $resultado = $vendaDAO->salvar($venda);
 

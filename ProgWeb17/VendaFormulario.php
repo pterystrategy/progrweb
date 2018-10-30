@@ -36,8 +36,8 @@ if (isset($_GET["id"])) {
                 <div class="row form-group">
                     <div class="col-md-12">
                         <label for="login">Cliente</label>
-                        <input type="hidden" name="idUsuario" id="id" value="<?php echo $venda->getId() ?>" >
-                        <input class="form-control" name="login" id="cliente" type="text" value="<?php echo $venda->getCliente() ?>">
+                        <input type="hidden" name="id" id="id" value="<?php echo $venda->getId() ?>" >
+                        <input class="form-control" name="cliente" id="cliente" type="text" value="<?php echo $venda->getCliente() ?>">
                     </div>
                 </div>
                 <div class="row form-group">
