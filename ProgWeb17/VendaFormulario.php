@@ -10,6 +10,8 @@ if (isset($_GET["id"])) {
 
     $vendaDAO = new VendaDAO();
     $venda = $vendaDAO->buscarPorId($id);
+    $t = $venda->getCliente();
+    echo "<script>alert('$t');</script>";
 }
 ?>
 
@@ -35,7 +37,7 @@ if (isset($_GET["id"])) {
             <div class="container">
                 <div class="row form-group">
                     <div class="col-md-12">
-                        <label for="login">Cliente</label>
+                        <label for="cliente">Cliente</label>
                         <input type="hidden" name="id" id="id" value="<?php echo $venda->getId() ?>" >
                         <input class="form-control" name="cliente" id="cliente" type="text" value="<?php echo $venda->getCliente() ?>">
                     </div>

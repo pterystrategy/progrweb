@@ -1,6 +1,7 @@
 <?php
 
 require_once 'class/VendaDAO.php';
+require_once './class/Venda.php';
 
 $operacao = $_GET['operacao'];
 $vendaDAO = new VendaDAO();

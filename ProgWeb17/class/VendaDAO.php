@@ -10,11 +10,12 @@ class VendaDAO {
         $situacao = FALSE;
         try {
 
-            if ($venda->getId() == 0) {
-
-                $situacao = $this->incluir($venda);
-            } else {
+            if ($venda->getId() > 0) {
                 $situacao = $this->atualizar($venda);
+                echo "<script>alert('atualizar');</script>";
+            } else {
+                $situacao = $this->incluir($venda);
+                echo "<script>alert('incluir');</script>";
             }
         } catch (Exception $ex) {
             echo $ex->getFile() . ' : ' . $ex->getLine() . ' : ' . $ex->getMessage();
@@ -61,14 +62,14 @@ class VendaDAO {
             /* @var $pdo type */
             $pdo = Banco::conectar();
 
-            $sql = "UPDATE tbVenda SET cliente = :cliente, cpf = :cpf, dataVenda = :dataVenda, total = :total  WHERE id = :id";
+            $sql = "UPDATE tbVenda SET cliente = :cliente, cpf = :cpf, dataVenda = :dataVenda, total = :total  WHERE  id = :id";
             $run = $pdo->prepare($sql);
 
             $run->bindParam(':id', $venda->getId(), PDO::PARAM_INT);
             $run->bindParam(':cliente', $venda->getCliente(), PDO::PARAM_STR);
             $run->bindParam(':cpf', $venda->getCpf(), PDO::PARAM_STR);
             $run->bindParam(':dataVenda', $venda->getDataVenda(), PDO::PARAM_STR);
-            $run->bindParam(':total', $venda->getId(), PDO::PARAM_INT);
+            $run->bindParam(':total', $venda->getTotal(), PDO::PARAM_INT);
             $run->execute();
 
             if ($run->rowCount() > 0) {
@@ -169,8 +170,6 @@ class VendaDAO {
 
     public function buscarPorId($codigo) {
 
-        $venda = new Venda();
-
         try {
 
             $pdo = Banco::conectar();
@@ -181,8 +180,8 @@ class VendaDAO {
             $run->bindParam(':id', $codigo, PDO::PARAM_INT);
             $run->execute();
             $resultado = $run->fetch();
-
-            $venda->setId($$resultado['id']);
+            $venda = new Venda();
+            $venda->setId($resultado['id']);
             $venda->setCliente($resultado['cliente']);
             $venda->setCpf($resultado['cpf']);
             $venda->setDataVenda($resultado['dataVenda']);
